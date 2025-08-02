@@ -5,10 +5,18 @@
 		<meta
 			name="viewport"
 			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-		<meta name="theme-color" content="#667eea" />
-		<link rel="manifest" href="manifest.json" />
+		<meta
+			name="apple-mobile-web-app-capable"
+			content="yes" />
+		<meta
+			name="apple-mobile-web-app-status-bar-style"
+			content="black-translucent" />
+		<meta
+			name="theme-color"
+			content="#667eea" />
+		<link
+			rel="manifest"
+			href="manifest.json" />
 		<title>청년부 제비뽑기</title>
 		<style>
 			* {
@@ -47,6 +55,7 @@
 				box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
 				display: flex;
 				flex-direction: column;
+				justify-content: center;
 				align-items: center;
 			}
 
@@ -534,7 +543,8 @@
 					height: 100vh;
 				}
 
-				.left-section, .right-section {
+				.left-section,
+				.right-section {
 					flex: 1;
 					height: 100%;
 					overflow-y: auto;
@@ -690,16 +700,19 @@
 				createPapers();
 				showTopicPreview();
 				updatePickCount();
-				
+
 				// Service Worker 등록
-				if ('serviceWorker' in navigator) {
-					navigator.serviceWorker.register('sw.js')
-						.then(reg => console.log('Service Worker 등록 성공'))
-						.catch(err => console.log('Service Worker 등록 실패:', err));
+				if ("serviceWorker" in navigator) {
+					navigator.serviceWorker
+						.register("sw.js")
+						.then((reg) => console.log("Service Worker 등록 성공"))
+						.catch((err) => console.log("Service Worker 등록 실패:", err));
 				}
-				
+
 				// 모바일 터치 이벤트 최적화
-				document.addEventListener('touchstart', function() {}, {passive: true});
+				document.addEventListener("touchstart", function () {}, {
+					passive: true,
+				});
 			};
 
 			// 남은 뽑기 횟수 업데이트
@@ -743,22 +756,30 @@
 
 			// 버튼 터치 피드백
 			function addTouchFeedback(button) {
-				button.addEventListener('touchstart', function() {
-					this.style.transform = 'scale(0.95)';
-				}, {passive: true});
-				
-				button.addEventListener('touchend', function() {
-					this.style.transform = '';
-				}, {passive: true});
+				button.addEventListener(
+					"touchstart",
+					function () {
+						this.style.transform = "scale(0.95)";
+					},
+					{ passive: true }
+				);
+
+				button.addEventListener(
+					"touchend",
+					function () {
+						this.style.transform = "";
+					},
+					{ passive: true }
+				);
 			}
-			
+
 			// 모든 버튼에 터치 피드백 추가
-			document.querySelectorAll('button').forEach(addTouchFeedback);
-			
+			document.querySelectorAll("button").forEach(addTouchFeedback);
+
 			// 섞기 효과
 			function shufflePapers() {
 				if (isShuffling || isPicking) return;
-				
+
 				// 모바일에서 진동 피드백
 				if (navigator.vibrate) {
 					navigator.vibrate(50);
@@ -825,7 +846,7 @@
 			// 뽑기
 			function pickPaper() {
 				if (isPicking || isShuffling || pickCount >= maxPicks) return;
-				
+
 				// 모바일에서 진동 피드백
 				if (navigator.vibrate) {
 					navigator.vibrate([50, 100, 50]);
