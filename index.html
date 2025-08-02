@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>청년부 제비뽑기 프로그램</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1800px;
+            height: 90vh;
+            display: flex;
+            gap: 30px;
+            align-items: stretch;
+        }
+
+        .left-section {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .right-section {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            color: #333;
+        }
+
+        .right-section.show {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: 4em;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+            text-align: center;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 10px #fff; }
+            to { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 20px #fff, 0 0 30px #fff; }
+        }
+
+        .lottery-box {
+            position: relative;
+            width: 450px;
+            height: 550px;
+            background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .papers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            gap: 15px;
+        }
+
+        .paper {
+            width: 70px;
+            height: 90px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .paper::before {
+            content: '?';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .paper.shuffle {
+            animation: shuffle 0.8s ease-in-out;
+        }
+
+        @keyframes shuffle {
+            0% { transform: translateY(0) rotate(0deg) scale(1); }
+            20% { transform: translateY(-50px) rotate(-25deg) scale(1.1); }
+            40% { transform: translateY(40px) rotate(20deg) scale(0.95); }
+            60% { transform: translateY(-30px) rotate(-15deg) scale(1.05); }
+            80% { transform: translateY(20px) rotate(10deg) scale(0.98); }
+            100% { transform: translateY(0) rotate(0deg) scale(1); }
+        }
+
+        .lottery-box.shaking {
+            animation: boxShake 0.5s ease-in-out;
+        }
+
+        @keyframes boxShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-2deg); }
+            75% { transform: rotate(2deg); }
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 20px 60px;
+            font-size: 1.8em;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(145deg, #ff6b6b, #ee5a24);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            text-align: center;
+        }
+
+        .result h2 {
+            color: #667eea;
+            margin-bottom: 40px;
+            font-size: 3.5em;
+            font-weight: bold;
+        }
+
+        .result .person {
+            font-size: 4.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 40px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+            animation: bounce 0.5s ease-out;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .result .topic {
+            font-size: 2.8em;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .result .question {
+            font-size: 2.2em;
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 20px;
+            line-height: 1.6;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .hand {
+            position: absolute;
+            bottom: -150px;
+            right: 50%;
+            transform: translateX(50%);
+            font-size: 120px;
+            transition: bottom 0.5s ease;
+        }
+
+        .hand.picking {
+            bottom: 200px;
+            animation: pick 1s ease-in-out;
+        }
+
+        @keyframes pick {
+            0%, 100% { transform: translateX(50%) rotate(0deg); }
+            50% { transform: translateX(50%) rotate(-10deg); }
+        }
+
+        .selected-paper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 140px;
+            height: 180px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            transition: transform 0.5s ease;
+        }
+
+        .selected-paper.show {
+            transform: translate(-50%, -50%) scale(1.8);
+        }
+
+        .topic-preview {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .topic-preview h2 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 40px;
+        }
+
+        .topic-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            font-size: 2em;
+            color: #555;
+        }
+
+        .topic-item {
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .topic-item.active {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            h1 {
+                font-size: 3em;
+            }
+            
+            .lottery-box {
+                width: 350px;
+                height: 450px;
+            }
+            
+            button {
+                padding: 15px 40px;
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="left-section">
+            <h1>✨ 주제별 제비뽑기 ✨</h1>
+            
+            <div class="lottery-box">
+                <div class="papers" id="papers">
+                    <!-- 제비들이 여기에 생성됩니다 -->
+                </div>
+                <div class="hand" id="hand">🤚</div>
+                <div class="selected-paper" id="selectedPaper"></div>
+            </div>
+
+            <div class="btn-group">
+                <button id="shuffleBtn" onclick="shufflePapers()">🔄 섞기</button>
+                <button id="pickBtn" onclick="pickPaper()">🎯 뽑기</button>
+            </div>
+        </div>
+
+        <div class="right-section" id="rightSection">
+            <div class="pick-count" id="pickCount">남은 뽑기: 5/5</div>
+            <div class="topic-preview" id="topicPreview">
+                <h2>오늘의 주제</h2>
+                <div class="topic-list">
+                    <div class="topic-item">🙏 봉사</div>
+                    <div class="topic-item">💰 재정관리</div>
+                    <div class="topic-item">👨‍👩‍👧‍👦 다자녀</div>
+                    <div class="topic-item">🎵 목소리</div>
+                    <div class="topic-item">😊 밝은미소</div>
+                </div>
+            </div>
+            <div class="result" id="result" style="display: none;">
+                <h2>선택된 질문</h2>
+                <div class="person"></div>
+                <div class="question"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 미리 정해진 데이터
+        const presetData = [
+            {
+                name: "이중구 집사",
+                topic: "봉사",
+                question: "기도원에서 봉사할 때 어떤 마음으로 하는지?"
+            },
+            {
+                name: "이은예 권사",
+                topic: "재정관리",
+                question: "돈의 유혹을 이겨내는 방법과 재정관리"
+            },
+            {
+                name: "임선영 권사",
+                topic: "다자녀",
+                question: "다자녀 하나님 말씀에 순종한 것인지..?"
+            },
+            {
+                name: "박성분 집사",
+                topic: "목소리",
+                question: "꾀꼬리같은 목소리의 비결"
+            },
+            {
+                name: "현순주 집사",
+                topic: "밝은미소",
+                question: "밝은 미소, 좋은 인성의 비결"
+            }
+        ];
+
+        let currentIndex = 0;
+        let isShuffling = false;
+        let isPicking = false;
+        let pickCount = 0;
+        const maxPicks = 5;
+
+        // 페이지 로드 시 제비 생성
+        window.onload = function() {
+            createPapers();
+            showTopicPreview();
+            updatePickCount();
+        };
+
+        // 남은 뽑기 횟수 업데이트
+        function updatePickCount() {
+            const remaining = maxPicks - pickCount;
+            document.getElementById('pickCount').textContent = `남은 뽑기: ${remaining}/${maxPicks}`;
+            
+            // 5번 다 뽑으면 뽑기 버튼 비활성화
+            if (remaining === 0) {
+                document.getElementById('pickBtn').disabled = true;
+                document.getElementById('pickBtn').textContent = '🎯 완료';
+            }
+        }
+
+        // 주제 미리보기 표시
+        function showTopicPreview() {
+            const rightSection = document.getElementById('rightSection');
+            const topicPreview = document.getElementById('topicPreview');
+            const result = document.getElementById('result');
+            
+            rightSection.classList.add('show');
+            topicPreview.style.display = 'block';
+            result.style.display = 'none';
+        }
+
+        // 제비 생성
+        function createPapers() {
+            const papersContainer = document.getElementById('papers');
+            papersContainer.innerHTML = '';
+            
+            // 15개의 제비 생성 (실제로는 5명만 선택됨)
+            for (let i = 0; i < 15; i++) {
+                const paper = document.createElement('div');
+                paper.className = 'paper';
+                paper.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+                papersContainer.appendChild(paper);
+            }
+        }
+
+        // 섞기 효과
+        function shufflePapers() {
+            if (isShuffling || isPicking) return;
+            
+            isShuffling = true;
+            const papers = document.querySelectorAll('.paper');
+            const shuffleBtn = document.getElementById('shuffleBtn');
+            const lotteryBox = document.querySelector('.lottery-box');
+            
+            shuffleBtn.disabled = true;
+            
+            // 주제 미리보기로 전환
+            showTopicPreview();
+            
+            // 박스 흔들기 효과
+            lotteryBox.classList.add('shaking');
+
+            // 섞기 애니메이션 - 더 역동적으로
+            papers.forEach((paper, index) => {
+                setTimeout(() => {
+                    paper.classList.add('shuffle');
+                    
+                    // 더 큰 범위의 랜덤 움직임
+                    const randomX = (Math.random() - 0.5) * 300;
+                    const randomY = (Math.random() - 0.5) * 300;
+                    const randomRotate = Math.random() * 720 - 360;
+                    
+                    paper.style.transition = 'all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                    paper.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRotate}deg) scale(${Math.random() * 0.5 + 0.8})`;
+                    
+                    // 중간에 한번 더 위치 변경
+                    setTimeout(() => {
+                        const newX = (Math.random() - 0.5) * 150;
+                        const newY = (Math.random() - 0.5) * 150;
+                        paper.style.transform = `translate(${newX}px, ${newY}px) rotate(${Math.random() * 360}deg)`;
+                    }, 400);
+                }, index * 50);
+            });
+
+            // 애니메이션 종료 후
+            setTimeout(() => {
+                papers.forEach((paper, index) => {
+                    paper.classList.remove('shuffle');
+                    paper.style.transition = 'all 0.5s ease-out';
+                    paper.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+                    
+                    // 순차적으로 원위치
+                    setTimeout(() => {
+                        paper.style.transition = 'transform 0.3s ease';
+                    }, index * 30);
+                });
+                
+                lotteryBox.classList.remove('shaking');
+                shuffleBtn.disabled = false;
+                isShuffling = false;
+            }, 2500);
+        }
+
+        // 뽑기
+        function pickPaper() {
+            if (isPicking || isShuffling || pickCount >= maxPicks) return;
+            
+            isPicking = true;
+            const pickBtn = document.getElementById('pickBtn');
+            const hand = document.getElementById('hand');
+            const selectedPaper = document.getElementById('selectedPaper');
+            const result = document.getElementById('result');
+            const topicPreview = document.getElementById('topicPreview');
+            const topicItems = document.querySelectorAll('.topic-item');
+            
+            pickBtn.disabled = true;
+            
+            // 손 애니메이션
+            hand.classList.add('picking');
+            
+            // 1초 후 결과 표시
+            setTimeout(() => {
+                // 미리 정해진 순서대로 선택
+                const selected = presetData[currentIndex];
+                
+                // 주제 강조 효과
+                topicItems.forEach((item, idx) => {
+                    item.classList.remove('active');
+                    if (idx === currentIndex) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                currentIndex = (currentIndex + 1) % presetData.length;
+                pickCount++;
+                updatePickCount();
+                
+                // 선택된 종이 표시
+                selectedPaper.classList.add('show');
+                
+                // 결과 표시
+                setTimeout(() => {
+                    result.querySelector('.person').textContent = selected.name;
+                    result.querySelector('.question').textContent = selected.question;
+                    
+                    topicPreview.style.display = 'none';
+                    result.style.display = 'block';
+                    
+                    // 색종이 효과
+                    createConfetti();
+                    
+                    // 초기화
+                    setTimeout(() => {
+                        hand.classList.remove('picking');
+                        selectedPaper.classList.remove('show');
+                        if (pickCount < maxPicks) {
+                            pickBtn.disabled = false;
+                        }
+                        isPicking = false;
+                    }, 1000);
+                }, 500);
+            }, 1000);
+        }
+
+        // 색종이 효과
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f7b731', '#5f27cd', '#00d2d3'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+    </script>
+</body>
+</html>
